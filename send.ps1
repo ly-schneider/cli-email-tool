@@ -1,39 +1,58 @@
-Write-Host ""
-Write-Host "Bitte wählen Sie eine Option:"
-Write-Host "1 (Meine E-Mail-Adresse ändern)"
-Write-Host "2 (Meine ausgewählte E-Mail-Adresse zeigen)" 
+$Content = Get-Content .\settings.txt
+$From = $Content[0]
+$Password = $Content[1]
+
+$Password = $Password | ConvertTo-SecureString -AsPlainText -Force
+$Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $From, $Password
 
 Write-Host ""
-$option = Read-Host "Option wählen"
-
-switch ($option) {
-  1 { 
-    $confirm = Read-Host "Sind Sie sicher, dass Sie die E-Mail-Adresse ändern möchten? (j/n)"
-    if ($confirm -eq 'j') {
-      $sender = $null
-
-      while ($sender -eq $null) {
-        $sender = Read-Host "Bitte geben Sie eine neue E-Mail-Adresse ein"
-        if ($sender -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
-          $sender | Out-File .\settings.txt
-          .\script.ps1
-        } else {
-          Write-Host ""
-          Write-Host "Diese E-Mail-Adresse ist ungültig. Bitte geben Sie eine gültige E-Mail-Adresse ein."
-          $sender = $null
-        }
-      }
-    } else {
-      Write-Host "Änderung abgebrochen."
-      .\script.ps1
-    }
-  }
-  2 { 
-    $sender = Get-Content .\settings.txt
-    Write-Host ""
-    Write-Host "Ihre konfigurierte Sender E-Mail-Adresse ist: $sender"
-    Write-Host ""
-    .\script.ps1
-   }
-   default { Write-Host "Ungültige Option" }
+$To = Read-Host "Gebe die E-Mail Adresse ein, an die die E-Mail gesendet werden soll"
+# If email not match the regex pattern
+if ($To -notmatch "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
+  Write-Host "Die E-Mail Adresse ist ungültig."
+  .\send.ps1
 }
+
+$Subject = Read-Host "Gebe den Betreff der E-Mail ein"
+if ($Subject -eq "") {
+  Write-Host "Der Betreff der E-Mail darf nicht leer sein."
+  .\send.ps1
+}
+
+$Body = ""
+do {
+    $line = Read-Host "Gebe den Inhalt der E-Mail ein (oder 'SEND' um zu senden der E-Mail)"
+    if ($line -ne "SEND") {
+        $Body += $line + "`n"
+    }
+} while ($line -ne "SEND")
+
+if ($Body -eq "") {
+    Write-Host "Der Inhalt der E-Mail darf nicht leer sein."
+    .\send.ps1
+}
+
+# Function to send email
+function Send-Email {
+  param (
+      [string]$To,
+      [string]$Subject,
+      [string]$Body
+  )
+
+  $EmailSettings = @{
+      To         = $To
+      From       = $From
+      Subject    = $Subject
+      Body       = $Body
+      SmtpServer = "smtp.gmail.com"
+      Port       = 587 
+      UseSsl     = $true
+      Credential = $Credential
+  }
+
+  Send-MailMessage @EmailSettings
+}
+
+# Example usage
+Send-Email -To $To -Subject $Subject -Body $Body

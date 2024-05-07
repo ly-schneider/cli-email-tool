@@ -10,25 +10,31 @@ Write-Host "|  Willkommen zum CLI E-Mail Tool"
 Write-Host "--------------------------------------------------------------------------------------"
 Write-Host "|"
 Write-Host "|  © 2024 by Levyn Schneider and David Meer"
+Write-Host "| (Unterstützt nur Gmail)"
 Write-Host "|"
 
 # Read Sender E-Mail from txt file
-$sender = $null
+$email = $null
 
 # Simple function to create a new file and insert the email
 function Get-Email() {
   Param($text)
 
-  $sender = Read-Host "|  $text"
+  $email = Read-Host "|  $text"
 
-  if ($sender -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
-    $sender | Out-File .\settings.txt
-    Write-Host "|"
-    Write-Host "--------------------------------------------------------------------------------------"
-    Write-Host ""
+  if ($email -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" -and $email.ToLower().Contains("@gmail.com")) {
+    $email | Out-File .\settings.txt
   } else {
     Get-Email "Diese E-Mail-Adresse ist ungültig. Bitte geben Sie eine gültige E-Mail-Adresse ein"
   }
+
+  $password = Read-Host "|  Bitte geben Sie Ihr E-Mail App Passwort von Google ein"
+  $password | Out-File .\settings.txt -Append
+
+  $content = Get-Content .\settings.txt
+  Write-Host "|"
+  Write-Host "--------------------------------------------------------------------------------------" + $content[1]
+  Write-Host ""
 }
 
 # Check if file exists
@@ -36,11 +42,12 @@ if (-not (Test-Path .\settings.txt)) {
     New-Item -ItemType file -Path .\settings.txt | Out-Null
     Get-Email "Bitte geben Sie Ihre E-Mail Adresse ein um fortzufahren"
 } else {
-  $sender = Get-Content .\settings.txt
+  $content = Get-Content .\settings.txt
+  $email = $content[0]
 
-  if ($sender -ne "" || $sender -ne $null) {
-    if ($sender -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
-      Write-Host "|  Konfigurierte Sender E-Mail Adresse: $sender"
+  if ($email -ne "" || $email -ne $null) {
+    if ($email -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
+      Write-Host "|  Konfigurierte Sender E-Mail Adresse: $email"
       Write-Host "|"
       Write-Host "--------------------------------------------------------------------------------------"
       Write-Host ""
@@ -73,6 +80,3 @@ switch ($option) {
      }
     default { Write-Host "Ungültige Option" }
 }
-
-
-# Send-MailMessage -From 'Absender@domain.com' -To 'Empfänger@domain.com' -Subject 'Betreff' -Body 'Nachrichtentext' -SmtpServer 'smtp.domain.com'

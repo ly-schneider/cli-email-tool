@@ -1,39 +1,31 @@
-Write-Host ""
-Write-Host "Bitte wählen Sie eine Option:"
-Write-Host "1 (Meine E-Mail-Adresse ändern)"
-Write-Host "2 (Meine ausgewählte E-Mail-Adresse zeigen)" 
+# Infinite loop to continuously fetch emails
+while ($true) {
+  $Content = Get-Content .\settings.txt
+  $From = $Content[0]
+  $Password = $Content[1]
 
-Write-Host ""
-$option = Read-Host "Option wählen"
+  # load rss-feed
+  $webclient = new-object System.Net.WebClient
 
-switch ($option) {
-  1 { 
-    $confirm = Read-Host "Sind Sie sicher, dass Sie die E-Mail-Adresse ändern möchten? (j/n)"
-    if ($confirm -eq 'j') {
-      $sender = $null
+  # access the rss-feed
+  $webclient.Credentials = new-object System.Net.NetworkCredential ($From, $Password)
 
-      while ($sender -eq $null) {
-        $sender = Read-Host "Bitte geben Sie eine neue E-Mail-Adresse ein"
-        if ($sender -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
-          $sender | Out-File .\settings.txt
-          .\script.ps1
-        } else {
-          Write-Host ""
-          Write-Host "Diese E-Mail-Adresse ist ungültig. Bitte geben Sie eine gültige E-Mail-Adresse ein."
-          $sender = $null
-        }
-      }
-    } else {
-      Write-Host "Änderung abgebrochen."
-      .\script.ps1
-    }
+  # download the rss as xml
+  [xml]$xml= $webclient.DownloadString("https://mail.google.com/mail/feed/atom")
+
+  # display only sender name and message title as custom table
+  $format= @{Expression={$_.issued};Label="Zugestellt"},
+           @{Expression={$_.author.email};Label="E-Mail"},
+           @{Expression={$_.title};Label="Subjekt"},
+           @{Expression={$_.summary};Label="Nachricht"}
+
+  if ($xml.feed.entry -eq $null) {
+      Write-Host "Keine ungelesenen E-Mails vorhanden"
+  } else {
+      # display the table
+      $xml.feed.entry | Format-Table $format
   }
-  2 { 
-    $sender = Get-Content .\settings.txt
-    Write-Host ""
-    Write-Host "Ihre konfigurierte Sender E-Mail-Adresse ist: $sender"
-    Write-Host ""
-    .\script.ps1
-   }
-   default { Write-Host "Ungültige Option" }
+
+  # Wait for 30 seconds before fetching emails again
+  Start-Sleep -Seconds 10
 }
