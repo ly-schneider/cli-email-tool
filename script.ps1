@@ -54,7 +54,7 @@ if (-not (Test-Path .\settings.txt)) {
 
 # Menu Selector
 Write-Host "Bitte wählen Sie eine Option:"
-Write-Host "1 (Sender E-Mail)"
+Write-Host "1 (Sender E-Mail Einstellungen)"
 Write-Host "2 (E-Mail Senden)"
 Write-Host "3 (E-Mail Empfangen)"
 Write-Host "4 (Exit)"
@@ -64,7 +64,7 @@ Write-Host ""
 $option = Read-Host "Option wählen"
 
 switch ($option) {
-    1 { .\sender.ps1 }
+    1 { .\settings.ps1 }
     2 { .\send.ps1 }
     3 { .\receive.ps1 }
     4 { 
