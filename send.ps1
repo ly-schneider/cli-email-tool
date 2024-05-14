@@ -2,6 +2,11 @@ $Content = Get-Content .\settings.txt
 $From = $Content[0]
 $Password = $Content[1]
 
+if ($From -eq "" -or $Password -eq "") {
+  Write-Host "E-Mail Adresse oder Gmail App-Code ist leer. Bitte konfigurieren Sie die E-Mail Adresse und das Passwort in settings.txt"
+  break
+}
+
 $Password = $Password | ConvertTo-SecureString -AsPlainText -Force
 $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $From, $Password
 
@@ -54,5 +59,8 @@ function Send-Email {
   Send-MailMessage @EmailSettings
 }
 
-# Example usage
 Send-Email -To $To -Subject $Subject -Body $Body
+Write-Host "E-Mail wurde erfolgreich gesendet!"
+Write-Host
+
+.\script.ps1
