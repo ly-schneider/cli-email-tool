@@ -52,7 +52,6 @@ function Get-EmailAndCode() {
 
 # Check if file exists
 if (-not (Test-Path .\settings.txt)) {
-    New-Item -ItemType file -Path .\settings.txt | Out-Null
     Get-EmailAndCode "Bitte geben Sie Ihre E-Mail Adresse und Gmail App Code ein um fortzufahren"
 } else {
   $Content = Get-Content .\settings.txt
@@ -81,7 +80,7 @@ if (-not (Test-Path .\settings.txt)) {
 
 # Menu Selector
 Write-Host "Bitte wählen Sie eine Option:"
-Write-Host "1 (Sender E-Mail Einstellungen)"
+Write-Host "1 (E-Mail Einstellungen)"
 Write-Host "2 (E-Mail Senden)"
 Write-Host "3 (E-Mail Empfangen)"
 Write-Host "4 (Exit)"

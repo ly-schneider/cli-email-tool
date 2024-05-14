@@ -1,9 +1,9 @@
 Write-Host
 Write-Host "Bitte wählen Sie eine Option:"
-Write-Host "1 (Meine Sender-E-Mail-Adresse ändern)"
-Write-Host "2 (Meine ausgewählte Sender-E-Mail-Adresse zeigen)" 
-Write-Host "3 (Meinen Gmail App-Code ändern)"
-Write-Host "4 (Meinen ausgewählten Gmail App-Code zeigen)"
+Write-Host "1 (Sender-E-Mail-Adresse ändern)"
+Write-Host "2 (Konfigurierte Sender-E-Mail-Adresse anzeigen)" 
+Write-Host "3 (Gmail App Code ändern)"
+Write-Host "4 (Konfigurierten Gmail App Code anzeigen)"
 Write-Host "5 (Zurück)"
 Write-Host "6 (Exit)"
 Write-Host
