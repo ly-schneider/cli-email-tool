@@ -26,34 +26,34 @@ if ($Subject -eq "") {
 
 $Body = ""
 do {
-    $line = Read-Host "Gebe den Inhalt der E-Mail ein (oder 'SEND' um zu senden der E-Mail)"
-    if ($line -ne "SEND") {
-        $Body += $line + "`n"
-    }
+  $line = Read-Host "Gebe den Inhalt der E-Mail ein (oder 'SEND' um zu senden der E-Mail)"
+  if ($line -ne "SEND") {
+    $Body += $line + "`n"
+  }
 } while ($line -ne "SEND")
 
 if ($Body -eq "") {
-    Write-Host "Der Inhalt der E-Mail darf nicht leer sein."
-    .\send.ps1
+  Write-Host "Der Inhalt der E-Mail darf nicht leer sein."
+  .\send.ps1
 }
 
 # Function to send email
 function Send-Email {
   param (
-      [string]$To,
-      [string]$Subject,
-      [string]$Body
+    [string]$To,
+    [string]$Subject,
+    [string]$Body
   )
 
   $EmailSettings = @{
-      To         = $To
-      From       = $From
-      Subject    = $Subject
-      Body       = $Body
-      SmtpServer = "smtp.gmail.com"
-      Port       = 587 
-      UseSsl     = $true
-      Credential = $Credential
+    To         = $To
+    From       = $From
+    Subject    = $Subject
+    Body       = $Body
+    SmtpServer = "smtp.gmail.com"
+    Port       = 587 
+    UseSsl     = $true
+    Credential = $Credential
   }
 
   Send-MailMessage @EmailSettings
