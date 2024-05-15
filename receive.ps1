@@ -9,21 +9,21 @@ while ($true) {
     $From = $Content[0]
     $Password = $Content[1]
 
-    # load rss-feed
+    # Load rss-feed
     $webclient = new-object System.Net.WebClient
 
-    # access the rss-feed
+    # Access the rss-feed
     $webclient.Credentials = new-object System.Net.NetworkCredential ($From, $Password)
 
-    # download the rss as xml
-    [xml]$xml= $webclient.DownloadString("https://mail.google.com/mail/feed/atom")
+    # Download the rss as xml
+    [xml]$xml = $webclient.DownloadString("https://mail.google.com/mail/feed/atom")
 
-    if ($xml.feed.entry -eq $null) {
+    if ($null -eq $xml.feed.entry) {
         Write-Host
         Write-Host "Keine ungelesenen E-Mails vorhanden"
         Write-Host
-    } else {
-        # Display each message
+    }
+    else {
         foreach ($entry in $xml.feed.entry) {
             Write-Host
             Write-Host "Zugestellt: $($entry.issued)"
@@ -35,13 +35,13 @@ while ($true) {
 
     # Create a log file with the fetched emails
     $TimeStamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+
     # Create a log file with the fetched emails
     $xml.feed.entry | ForEach-Object {
         $Log = "Zugestellt: $($_.issued)`nE-Mail: $($_.author.email)`nSubjekt: $($_.title)`nNachricht: $($_.summary)`n"
         $Log | Out-File -FilePath ".\LOGS\EmailLog_$TimeStamp.txt" -Append
     }
 
-    # Divider between iterations
     Write-Host
     Write-Host "----------------------------------------"
 
