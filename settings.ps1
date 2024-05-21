@@ -15,6 +15,7 @@ switch ($option) {
     $Content = Get-Content .\settings.txt
     $Email = $null
 
+    # Repeat until the user types a valid email address
     while ($null -eq $Email) {
       $Email = Read-Host "Bitte geben Sie eine neue Sender-E-Mail-Adresse ein"
       if ($Email -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" -and $Email -like "*@gmail.com") {
@@ -43,13 +44,22 @@ switch ($option) {
     $Content = Get-Content .\settings.txt
     $Password = $null
 
+    # Repeat until the user types a valid Gmail App Code
     while ($null -eq $Password) {
       $Password = Read-Host "Bitte geben Sie einen neuen Gmail App-Code ein"
-      $NewContent = $Content[0] + "`n" + $Password
-      $NewContent | Out-File .\settings.txt
-      Write-Host ""
-      Write-Host "Gmail App-Code erfolgreich geändert!"
-      .\settings.ps1
+
+      if ($Password -ne "") {
+        $NewContent = $Content[0] + "`n" + $Password
+        $NewContent | Out-File .\settings.txt
+        Write-Host ""
+        Write-Host "Gmail App-Code erfolgreich geändert!"
+        .\settings.ps1
+      }
+      else {
+        Write-Host ""
+        Write-Host "Der Gmail App-Code darf nicht leer sein. Bitte geben Sie einen gültigen Gmail App-Code ein."
+        $Password = $null
+      }
     }
   }
   4 { 

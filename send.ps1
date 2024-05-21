@@ -2,6 +2,7 @@ $Content = Get-Content .\settings.txt
 $From = $Content[0]
 $Password = $Content[1]
 
+# Check if the content is correct
 if ($From -eq "" -or $Password -eq "") {
   Write-Host "E-Mail Adresse oder Gmail App-Code ist leer. Bitte konfigurieren Sie die E-Mail Adresse und das Passwort in settings.txt"
   break
@@ -12,6 +13,7 @@ $Credential = New-Object -TypeName System.Management.Automation.PSCredential -Ar
 
 Write-Host ""
 $To = Read-Host "Gebe die E-Mail Adresse ein, an die die E-Mail gesendet werden soll"
+
 # If email not match the regex pattern
 if ($To -notmatch "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") {
   Write-Host "Die E-Mail Adresse ist ungültig."
@@ -25,6 +27,7 @@ if ($Subject -eq "") {
 }
 
 $Body = ""
+# Repeat until the user types 'SEND'
 do {
   $line = Read-Host "Gebe den Inhalt der E-Mail ein (oder 'SEND' um zu senden der E-Mail)"
   if ($line -ne "SEND") {

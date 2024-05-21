@@ -18,6 +18,7 @@ function Get-EmailAndCode() {
   Write-Host "|  $text"
   $Email = $null
 
+  # Repeat until a valid email is entered
   while ($null -eq $Email) {
     $Email = Read-Host "|  Bitte geben Sie Ihre E-Mail Adresse ein"
     if ($Email -match "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" -and $Email -like "*@gmail.com") {
@@ -25,6 +26,7 @@ function Get-EmailAndCode() {
 
       $Password = $null
 
+      # Repeat until a valid password is entered
       while ($null -eq $Password) {
         $Password = Read-Host "|  Bitte geben Sie Ihren Gmail App-Code ein"
 
