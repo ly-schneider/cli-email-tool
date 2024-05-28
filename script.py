@@ -191,13 +191,21 @@ def main():
 
         if email == "" or app_code == "":
             choose_login_register("Deine Konfiguration ist ungültig.")
+        else:
+            print(f"|  Eingeloggt als: {email}")
+            print("|")
+            print(
+                "--------------------------------------------------------------------------------------"
+            )
+            print()
 
     # Menu Selector
     print("Bitte wählen Sie eine Option:")
     print("1 (E-Mail Einstellungen)")
     print("2 (E-Mail Senden)")
     print("3 (E-Mail Empfangen)")
-    print("4 (Exit)")
+    print("4 (Logout)")
+    print("5 (Exit)")
     print()
 
     option = input("Option wählen: ")
@@ -209,6 +217,9 @@ def main():
     elif option == "3":
         os.system("python3 receive.py")
     elif option == "4":
+        os.remove("settings.txt")
+        print("Erfolgreich ausgeloggt")
+    elif option == "5":
         print()
         print("Auf Wiedersehen!")
     else:
