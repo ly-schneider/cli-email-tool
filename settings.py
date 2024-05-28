@@ -32,7 +32,7 @@ def change_email():
         if re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", email) and email.endswith("@gmail.com"):
             save_settings(email, current_password)
             print("\nE-Mail-Adresse erfolgreich geändert! Ihre neue E-Mail-Adresse ist:", email)
-            main()
+            settings_menu()
         else:
             print("\nDiese E-Mail-Adresse ist ungültig. Bitte geben Sie eine gültige E-Mail-Adresse ein.")
             email = None
@@ -41,7 +41,7 @@ def show_email():
     email, _ = get_settings()
     if email:
         print("\nIhre konfigurierte Sender-E-Mail-Adresse ist:", email)
-    main()
+    settings_menu()
 
 def change_password():
     current_email, _ = get_settings()
@@ -51,7 +51,7 @@ def change_password():
         if password:
             save_settings(current_email, password)
             print("\nGmail App-Code erfolgreich geändert!")
-            main()
+            settings_menu()
         else:
             print("\nDer Gmail App-Code darf nicht leer sein. Bitte geben Sie einen gültigen Gmail App-Code ein.")
             password = None
@@ -60,17 +60,13 @@ def show_password():
     _, password = get_settings()
     if password:
         print("\nIhr konfigurierter Gmail App-Code ist:", password)
-    main()
-
-def main_menu():
-    # This function should be implemented to navigate back to the main script
-    pass
+    settings_menu()
 
 def exit_program():
     print("\nAuf Wiedersehen!")
     exit()
 
-def main():
+def settings_menu():
     display_menu()
     option = input("Option wählen: ")
     
@@ -83,12 +79,12 @@ def main():
     elif option == '4':
         show_password()
     elif option == '5':
-        main_menu()
+        os.system('python3 script.py')
     elif option == '6':
         exit_program()
     else:
         print("Ungültige Option")
-        main()
+        settings_menu()
 
 if __name__ == "__main__":
-    main()
+    settings_menu()
