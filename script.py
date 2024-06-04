@@ -3,6 +3,7 @@ import re
 import sqlite3
 import bcrypt
 
+# Connect to database and create account table if it doesn't exist
 con = sqlite3.connect("accounts.db")
 cur = con.cursor()
 cur.execute(

@@ -3,6 +3,7 @@ import re
 import sqlite3
 import bcrypt
 
+# Connect to database
 con = sqlite3.connect("accounts.db")
 cur = con.cursor()
 
@@ -16,13 +17,13 @@ def get_settings():
     return None, None
 
 
-def save_settings(email, app_code):
+def save_settings(email, appCode):
     with open("settings.txt", "w") as f:
-        f.write(f"{email}\n{app_code}\n")
+        f.write(f"{email}\n{appCode}\n")
 
 
 def change_email():
-    email, current_app_code = get_settings()
+    email, currentAppCode = get_settings()
 
     cur.execute("SELECT password, app_code FROM account WHERE email = ?", (email,))
     row = cur.fetchone()
@@ -31,11 +32,11 @@ def change_email():
         print("\nEs existiert keinen einen Account mit dieser E-Mail Adresse")
         return
 
-    hashed_password = row[0]
+    hashedPassword = row[0]
 
     password = input("Bitte geben Sie Ihr Passwort zur verifizierung ein: ")
 
-    if not bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8")):
+    if not bcrypt.checkpw(password.encode("utf-8"), hashedPassword.encode("utf-8")):
         print("\nDas Passwort ist inkorrekt")
         change_email()
 
@@ -46,7 +47,7 @@ def change_email():
         if re.match(
             r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", newEmail
         ) and newEmail.endswith("@gmail.com"):
-            save_settings(newEmail, current_app_code)
+            save_settings(newEmail, currentAppCode)
 
             cur.execute(
                 """
@@ -88,26 +89,26 @@ def change_app_code():
         print("\nEs existiert keinen einen Account mit dieser E-Mail Adresse")
         return
 
-    hashed_password = row[0]
+    hashedPassword = row[0]
 
     password = input("Bitte geben Sie Ihr Passwort zur verifizierung ein: ")
 
-    if not bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8")):
+    if not bcrypt.checkpw(password.encode("utf-8"), hashedPassword.encode("utf-8")):
         print("\nDas Passwort ist inkorrekt")
         change_app_code()
 
-    app_code = None
-    while app_code is None:
-        app_code = input("Bitte geben Sie einen neuen Gmail App-Code ein: ")
-        if app_code:
-            save_settings(email, app_code)
+    appCode = None
+    while appCode is None:
+        appCode = input("Bitte geben Sie einen neuen Gmail App-Code ein: ")
+        if appCode:
+            save_settings(email, appCode)
 
             cur.execute(
                 """
                     UPDATE account SET app_code = ? WHERE email = ?
                 """,
                 (
-                    app_code,
+                    appCode,
                     email,
                 ),
             )
@@ -119,13 +120,13 @@ def change_app_code():
             print(
                 "\nDer Gmail App-Code darf nicht leer sein. Bitte geben Sie einen gültigen Gmail App-Code ein."
             )
-            app_code = None
+            appCode = None
 
 
 def show_app_code():
-    _, app_code = get_settings()
-    if app_code:
-        print("\nIhr konfigurierter Gmail App-Code ist:", app_code)
+    _, appCode = get_settings()
+    if appCode:
+        print("\nIhr konfigurierter Gmail App-Code ist:", appCode)
     settings_menu()
 
 
@@ -139,25 +140,25 @@ def change_password():
         print("\nEs existiert keinen einen Account mit dieser E-Mail Adresse")
         return
 
-    hashed_password = row[0]
+    hashedPassword = row[0]
 
     oldPassword = input("Bitte geben Sie Ihr altes Passwort ein: ")
 
-    if not bcrypt.checkpw(oldPassword.encode("utf-8"), hashed_password.encode("utf-8")):
+    if not bcrypt.checkpw(oldPassword.encode("utf-8"), hashedPassword.encode("utf-8")):
         print("\nDas Passwort ist inkorrekt")
         change_password()
 
-    password = None
-    while password is None:
-        password = input(
+    newPassword = None
+    while newPassword is None:
+        newPassword = input(
             "Bitte geben Sie Ihr neues Passwort ein. Das Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Grossbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. (^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$): "
         )
         if re.match(
             r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            password,
+            newPassword,
         ):
-            new_hashed_password = bcrypt.hashpw(
-                password.encode("utf-8"), bcrypt.gensalt()
+            newHashedPassword = bcrypt.hashpw(
+                newPassword.encode("utf-8"), bcrypt.gensalt()
             )
 
             cur.execute(
@@ -165,7 +166,7 @@ def change_password():
                     UPDATE account SET password = ? WHERE email = ?
                 """,
                 (
-                    new_hashed_password.decode("utf-8"),
+                    newHashedPassword.decode("utf-8"),
                     email,
                 ),
             )
@@ -177,7 +178,7 @@ def change_password():
             print(
                 "\nDas Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Grossbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. (^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$)"
             )
-            password = None
+            newPassword = None
 
 
 def settings_menu():
