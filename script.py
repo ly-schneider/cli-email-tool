@@ -18,18 +18,6 @@ cur.execute(
 con.commit()
 
 
-def print_message():
-    print("|")
-    print("|  Willkommen zum CLI E-Mail Tool")
-    print(
-        "--------------------------------------------------------------------------------------"
-    )
-    print("|")
-    print("|  © 2024 by Levyn Schneider and David Meer")
-    print("|  (Unterstützt nur Gmail)")
-    print("|")
-
-
 def choose_login_register(text):
     if text:
         print(f"|  {text}")
@@ -65,27 +53,30 @@ def login():
     row = cur.fetchone()
 
     if row:
-        password = input("|  Bitte geben Sie Ihr Passwort ein: ")
+        password = None
 
-        stored_hashed_password = row[0]
+        while password is None:
+            password = input("|  Bitte geben Sie Ihr Passwort ein: ")
 
-        # Verify the input password against the stored hashed password
-        if bcrypt.checkpw(
-            password.encode("utf-8"), stored_hashed_password.encode("utf-8")
-        ):
-            print("|")
-            print("|  Login erfolgreich")
-            print("|")
-            print(
-                "--------------------------------------------------------------------------------------"
-            )
-            print()
-            with open("settings.txt", "w") as f:
-                f.write(f"{email}\n{row[1]}")
-        else:
-            print("|")
-            print("|  Das Passwort ist inkorrekt")
-            password = None
+            stored_hashed_password = row[0]
+
+            # Verify the input password against the stored hashed password
+            if bcrypt.checkpw(
+                password.encode("utf-8"), stored_hashed_password.encode("utf-8")
+            ):
+                print("|")
+                print("|  Login erfolgreich")
+                print("|")
+                print(
+                    "--------------------------------------------------------------------------------------"
+                )
+                print()
+                with open("settings.txt", "w") as f:
+                    f.write(f"{email}\n{row[1]}")
+            else:
+                print("|")
+                print("|  Das Passwort ist inkorrekt")
+                password = None
     else:
         print("|")
         print("|  Es existiert kein Account mit dieser E-Mail Adresse")
@@ -132,12 +123,17 @@ def create_account():
                 # Repeat until a valid password is entered
                 while password is None:
                     password = input(
-                        "|  Bitte geben Sie ein Passwort ein (wird genutzt um dich einfacher zu Authentifizieren): "
+                        "|  Bitte geben Sie ein Passwort ein (wird genutzt um dich einfacher zu Authentifizieren). Das Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Grossbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. (^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$): "
                     )
 
-                    if password == "":
+                    if not re.match(
+                        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+                        password,
+                    ):
                         print("|")
-                        print("|  Das E-Mail Passwort darf nicht leer sein")
+                        print(
+                            "| Das Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. (^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$)"
+                        )
                         password = None
                         continue
 
@@ -158,7 +154,7 @@ def create_account():
                         f.write(f"{email}\n{app_code}")
 
                 print("|")
-                print("|  Account erfolgreich konfiguriert")
+                print("|  Account erfolgreich registriert")
                 print("|")
                 print(
                     "--------------------------------------------------------------------------------------"
@@ -173,7 +169,15 @@ def create_account():
 
 
 def main():
-    print_message()
+    print("|")
+    print("|  Willkommen zum CLI E-Mail Tool")
+    print(
+        "--------------------------------------------------------------------------------------"
+    )
+    print("|")
+    print("|  © 2024 by Levyn Schneider and David Meer")
+    print("|  (Unterstützt nur Gmail)")
+    print("|")
 
     # Check if file exists
     if not os.path.exists("settings.txt"):
@@ -201,7 +205,7 @@ def main():
 
     # Menu Selector
     print("Bitte wählen Sie eine Option:")
-    print("1 (E-Mail Einstellungen)")
+    print("1 (Einstellungen)")
     print("2 (E-Mail Senden)")
     print("3 (E-Mail Empfangen)")
     print("4 (Logout)")
